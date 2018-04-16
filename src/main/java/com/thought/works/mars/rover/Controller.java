@@ -1,8 +1,5 @@
 package com.thought.works.mars.rover;
 
-import org.slf4j.LoggerFactory;
-import sun.rmi.runtime.Log;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,25 +9,31 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Controller {
-    private Logger LOGGER = (Logger) LoggerFactory.getLogger(Controller.class);
+    private Logger LOGGER = Logger.getLogger(Controller.class.getName());
 
     private String response;
     private List<MarsRover> rovers;
-    private Cardinals cardinals;
     private int xSize;
     private int ySize;
+    private int roversNumber;
     private BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
     private void initRovers() {
         try {
+            LOGGER.info("-------------------Application started.--------------------");
             response = bufferedReader.readLine();
-            xSize = response.toCharArray()[0];
-            ySize = response.toCharArray()[2];
+            xSize = Character.getNumericValue(response.toCharArray()[0]);
+            ySize = Character.getNumericValue(response.toCharArray()[2]);
+            LOGGER.info("Enter the number of rovers you want to run:");
+            roversNumber = Integer.parseInt(bufferedReader.readLine());
             rovers = new ArrayList<>();
-            while ((response = bufferedReader.readLine()) != null) {
-                int x = response.toCharArray()[0];
-                int y = response.toCharArray()[2];
+            for (int i = 0; i < roversNumber; i++) {
+                LOGGER.info("Introduce rover position:");
+                response = bufferedReader.readLine();
+                int x = Character.getNumericValue(response.toCharArray()[0]);
+                int y = Character.getNumericValue(response.toCharArray()[2]);
                 char heading = response.toCharArray()[4];
+                LOGGER.info("Introduce the instructions:");
                 response = bufferedReader.readLine();
                 MarsRover marsRover = new MarsRover(x, y, heading);
                 marsRover.setInstructions(response);
@@ -41,31 +44,63 @@ public class Controller {
         }
     }
 
-    public int executeRover(MarsRover rover) {
+    private String executeRover(MarsRover rover) {
         String instructions = rover.getInstructions();
         char[] sequence = instructions.toCharArray();
         for (char c : sequence) {
             switch (c) {
                 case 'L':
-
+                    rover.rotateHeading(true);
+                    break;
+                case 'R':
+                    rover.rotateHeading(false);
+                    break;
+                case 'M':
+                    rover.moveRover();
+                    break;
+                default:
+                    LOGGER.info("Bad instructions. Please, introduce a new ones: ");
+                    try {
+                        rover.setInstructions(bufferedReader.readLine());
+                        executeRover(rover);
+                    } catch (IOException e) {
+                        LOGGER.log(Level.SEVERE, "Exception in read line", e);
+                    }
             }
+        }
+        if (!rover.responseIsValid(xSize, ySize)) {
+            try {
+                LOGGER.info("Bad instructions. Rover can not be out of bounds. Introduce new instructions: ");
+                rover.setInstructions(bufferedReader.readLine());
+                executeRover(rover);
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Exception in read line", e);
+            }
+        }
+        return rover.getResponse();
+    }
 
+    public void runRovers() {
+        initRovers();
+        for (MarsRover rover : rovers) {
+            try {
+                checkRoverValues(rover);
+                LOGGER.info(executeRover(rover));
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Exception in read line", e);
+            }
         }
     }
 
-    private void checkRoverValues(int x, int y, char heading) throws IOException {
-        if (x > xSize) {
+    private void checkRoverValues(MarsRover rover) throws IOException {
+        if (rover.getX() > xSize) {
             LOGGER.info("X value incorrect, please, enter a new one: ");
-            x = Integer.parseInt(bufferedReader.readLine());
-            checkRoverValues(x, y, heading);
-        } else if (y > ySize) {
+            rover.setX(Integer.parseInt(bufferedReader.readLine()));
+            checkRoverValues(rover);
+        } else if (rover.getY() > ySize) {
             LOGGER.info("Y value incorrect, please, enter a new one: ");
-            y = Integer.parseInt(bufferedReader.readLine());
-            checkRoverValues(x, y, heading);
-        } else if (cardinals.isInCardinalsEnum(String.valueOf(heading))) {
-            LOGGER.info("Cardinal value incorrect, please, enter a new one (N, S, E, O): ");
-            heading = bufferedReader.readLine().toCharArray()[0];
-            checkRoverValues(x, y, heading);
+            rover.setY(Integer.parseInt(bufferedReader.readLine()));
+            checkRoverValues(rover);
         }
     }
 }

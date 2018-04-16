@@ -1,6 +1,5 @@
 package com.thought.works.mars.rover;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -8,13 +7,21 @@ public class MarsRover {
 
     private int x;
     private int y;
-    private char heading;
+    private Cardinals heading;
     private String instructions;
 
-    public MarsRover(int x, int y, char heading){
-        this.x=x;
-        this.y=y;
-        this.heading = heading;
+    public MarsRover(int x, int y, char heading) {
+        this.x = x;
+        this.y = y;
+        this.heading = Cardinals.convertCharToCardinal(heading);
+    }
+
+    public String getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
     }
 
     public int getX() {
@@ -33,27 +40,63 @@ public class MarsRover {
         this.y = y;
     }
 
-    public char getHeading() {
+    public Cardinals getHeading() {
         return heading;
     }
 
-    public void setHeading(char heading) {
+    public void setHeading(Cardinals heading) {
         this.heading = heading;
     }
 
-    public void rotateHeading(boolean left){
-        int i = 0;
-        List<Cardinals> cardinals = Arrays.asList(Cardinals.N, Cardinals.S, Cardinals.E, Cardinals.O);
-        for(Cardinals cardinal : cardinals){
-            heading = cardinal.equals(cardinals.get(i)) ? heading
+    /**
+     * Function to get the final output of the rover
+     *
+     * @return output
+     */
+    public String getResponse() {
+        String response = x + " " + y + " " + heading.toString();
+        return response;
+    }
+
+    public boolean responseIsValid(int xSize, int ySize) {
+        if (x > xSize || y > ySize) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Function to rotate the mars rover
+     *
+     * @param left would be true if it have to rotate left
+     */
+    public void rotateHeading(boolean left) {
+        List<Cardinals> cardinals = Arrays.asList(Cardinals.N, Cardinals.E, Cardinals.S, Cardinals.O);
+        for (Cardinals cardinal : cardinals) {
+            if(heading.equals(cardinal)){
+                heading = Cardinals.getRotatedCardinal(cardinal, left);
+                break;
+            }
         }
     }
 
-    public String getInstructions() {
-        return instructions;
-    }
-
-    public void setInstructions(String instructions) {
-        this.instructions = instructions;
+    /**
+     * Function to move forward one grid point
+     */
+    public void moveRover() {
+        switch (heading) {
+            case N:
+                y++;
+                break;
+            case S:
+                y--;
+                break;
+            case E:
+                x++;
+                break;
+            case O:
+                x--;
+                break;
+        }
     }
 }
