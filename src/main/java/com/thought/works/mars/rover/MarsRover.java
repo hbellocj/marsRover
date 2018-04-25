@@ -54,11 +54,10 @@ public class MarsRover {
      * @return output
      */
     public String getResponse() {
-        String response = x + " " + y + " " + heading.toString();
-        return response;
+        return String.format("%d %d %s", x, y, heading);
     }
 
-    public boolean responseIsValid(int xSize, int ySize) {
+    public boolean isSizeValid(int xSize, int ySize) {
         if (x > xSize || y > ySize) {
             return false;
         }
@@ -71,7 +70,7 @@ public class MarsRover {
      * @param left would be true if it have to rotate left
      */
     public void rotateHeading(boolean left) {
-        List<Cardinals> cardinals = Arrays.asList(Cardinals.N, Cardinals.E, Cardinals.S, Cardinals.O);
+        List<Cardinals> cardinals = Arrays.asList(Cardinals.N, Cardinals.E, Cardinals.S, Cardinals.W);
         for (Cardinals cardinal : cardinals) {
             if(heading.equals(cardinal)){
                 heading = Cardinals.getRotatedCardinal(cardinal, left);
@@ -94,7 +93,7 @@ public class MarsRover {
             case E:
                 x++;
                 break;
-            case O:
+            case W:
                 x--;
                 break;
         }

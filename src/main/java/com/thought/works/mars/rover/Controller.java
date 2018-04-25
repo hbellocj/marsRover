@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@org.springframework.stereotype.Controller
 public class Controller {
     private Logger LOGGER = Logger.getLogger(Controller.class.getName());
 
@@ -19,8 +20,9 @@ public class Controller {
     private BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
     private void initRovers() {
+        LOGGER.info("-------------------Application started.--------------------");
         try {
-            LOGGER.info("-------------------Application started.--------------------");
+            LOGGER.info("Input grid size:");
             response = bufferedReader.readLine();
             xSize = Character.getNumericValue(response.toCharArray()[0]);
             ySize = Character.getNumericValue(response.toCharArray()[2]);
@@ -68,7 +70,7 @@ public class Controller {
                     }
             }
         }
-        if (!rover.responseIsValid(xSize, ySize)) {
+        if (!rover.isSizeValid(xSize, ySize)) {
             try {
                 LOGGER.info("Bad instructions. Rover can not be out of bounds. Introduce new instructions: ");
                 rover.setInstructions(bufferedReader.readLine());
@@ -81,13 +83,15 @@ public class Controller {
     }
 
     public void runRovers() {
-        initRovers();
-        for (MarsRover rover : rovers) {
-            try {
-                checkRoverValues(rover);
-                LOGGER.info(executeRover(rover));
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Exception in read line", e);
+        while (true) {
+            initRovers();
+            for (MarsRover rover : rovers) {
+                try {
+                    checkRoverValues(rover);
+                    LOGGER.info(executeRover(rover));
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, "Exception in read line", e);
+                }
             }
         }
     }

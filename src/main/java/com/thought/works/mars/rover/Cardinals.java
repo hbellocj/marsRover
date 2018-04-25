@@ -7,7 +7,7 @@ public enum Cardinals {
     N,
     S,
     E,
-    O;
+    W;
 
 
     public static Cardinals convertCharToCardinal(char c) {
@@ -18,19 +18,19 @@ public enum Cardinals {
                 return Cardinals.S;
             case 'E':
                 return Cardinals.E;
-            case 'O':
-                return Cardinals.O;
+            case 'W':
+                return Cardinals.W;
             default:
                 return null;
         }
     }
 
     public static Cardinals getRotatedCardinal(Cardinals cardinal, boolean left) {
-        List<Cardinals> cardinals = Arrays.asList(N, E, S, O);
+        List<Cardinals> cardinals = Arrays.asList(N, E, S, W);
         if (left) {
-            return cardinal.equals(N) ? O : cardinals.get(cardinals.indexOf(cardinal) - 1);
+            return cardinal.equals(N) ? W : cardinals.get(cardinals.indexOf(cardinal) - 1);
         }
-        return cardinal.equals(O) ? N : cardinals.get(cardinals.indexOf(cardinal) + 1);
+        return cardinal.equals(W) ? N : cardinals.get(cardinals.indexOf(cardinal) + 1);
     }
 
 }
