@@ -120,9 +120,11 @@ public class MarsRoverTest {
         marsRover.setX(1);
         marsRover.setY(2);
         marsRover.setHeading(Cardinals.S);
+        marsRover.setInstructions("LMLMLMLMM");
         assertEquals(1, marsRover.getX());
         assertEquals(2, marsRover.getY());
         assertEquals(Cardinals.S, marsRover.getHeading());
+        assertEquals("LMLMLMLMM", marsRover.getInstructions());
     }
 
     @Test

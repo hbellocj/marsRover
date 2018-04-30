@@ -10,7 +10,8 @@ import java.util.logging.Logger;
 
 @org.springframework.stereotype.Controller
 public class Controller {
-    private Logger LOGGER = Logger.getLogger(Controller.class.getName());
+    protected Logger LOGGER = Logger.getLogger(Controller.class.getName());
+    private final static String EXCEPTION_INIT_ROVERS = "Error initializing rovers.";
 
     private String response;
     private List<MarsRover> rovers;
@@ -82,15 +83,16 @@ public class Controller {
         return rover.getResponse();
     }
 
-    public void runRovers() {
+    public String runRovers() {
         while (true) {
             initRovers();
             for (MarsRover rover : rovers) {
                 try {
                     checkRoverValues(rover);
-                    LOGGER.info(executeRover(rover));
+                    return executeRover(rover);
                 } catch (IOException e) {
                     LOGGER.log(Level.SEVERE, "Exception in read line", e);
+                    return EXCEPTION_INIT_ROVERS;
                 }
             }
         }
@@ -106,5 +108,9 @@ public class Controller {
             rover.setY(Integer.parseInt(bufferedReader.readLine()));
             checkRoverValues(rover);
         }
+    }
+
+    public BufferedReader getBufferedReader() {
+        return bufferedReader;
     }
 }
