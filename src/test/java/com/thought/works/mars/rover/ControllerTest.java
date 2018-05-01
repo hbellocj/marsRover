@@ -1,10 +1,17 @@
 package com.thought.works.mars.rover;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 
 import static org.mockito.Mockito.when;
@@ -15,14 +22,18 @@ public class ControllerTest {
     private static final String POSITION = "1 2 N";
     private static final String INSTRUCTIONS = "LMLMLMLMM";
     private static final String RESPONSE = "1 3 N";
-    @Mock
+
+    @InjectMocks
     private Controller mController;
+
+    @Mock
+    private BufferedReader bufferedReader = Mockito.mock(BufferedReader.class);
 
     private int counter;
 
     @Test
     public void GC_initRovers_roversRegistered() throws IOException {
-        when(mController.getBufferedReader().readLine()).thenAnswer((Answer) invocationOnMock -> {
+        when(bufferedReader.readLine()).thenAnswer((Answer) invocationOnMock -> {
             counter++;
             switch (counter % 4) {
                 case 1:
@@ -36,13 +47,8 @@ public class ControllerTest {
             }
             return null;
         });
+
+
         Assert.assertEquals(mController.runRovers(), RESPONSE);
-
-    }
-
-
-    @Test
-    public void runRovers() {
-
     }
 }

@@ -1,5 +1,7 @@
 package com.thought.works.mars.rover;
 
+import org.springframework.stereotype.Component;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,7 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@org.springframework.stereotype.Controller
+@Component
 public class Controller {
     protected Logger LOGGER = Logger.getLogger(Controller.class.getName());
     private final static String EXCEPTION_INIT_ROVERS = "Error initializing rovers.";
@@ -18,7 +20,7 @@ public class Controller {
     private int xSize;
     private int ySize;
     private int roversNumber;
-    private BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+    public BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
     private void initRovers() {
         LOGGER.info("-------------------Application started.--------------------");
@@ -108,9 +110,5 @@ public class Controller {
             rover.setY(Integer.parseInt(bufferedReader.readLine()));
             checkRoverValues(rover);
         }
-    }
-
-    public BufferedReader getBufferedReader() {
-        return bufferedReader;
     }
 }
