@@ -1,19 +1,16 @@
 package com.thought.works.mars.rover;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 public class ControllerTest {
@@ -32,7 +29,8 @@ public class ControllerTest {
     private int counter;
 
     @Test
-    public void GC_initRovers_roversRegistered() throws IOException {
+    public void GC_executeRovers_goodResponse() throws IOException {
+        mController = new Controller();
         when(bufferedReader.readLine()).thenAnswer((Answer) invocationOnMock -> {
             counter++;
             switch (counter % 4) {
@@ -51,4 +49,12 @@ public class ControllerTest {
 
         Assert.assertEquals(mController.runRovers(), RESPONSE);
     }
+
+    @Test
+    public void BC_executeRovers_exception() throws IOException {
+        mController = new Controller();
+        when(bufferedReader.readLine()).thenThrow(new IOException());
+        Assert.assertEquals("Error initializing rovers.", mController.runRovers());
+    }
+
 }
