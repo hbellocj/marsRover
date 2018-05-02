@@ -88,9 +88,6 @@ public class Controller {
                 case 'M':
                     rover.moveRover();
                     break;
-                case 'E':
-                    //do nothing
-                    break;
                 default:
                     int roverNumber = rovers.indexOf(rover) + 1;
                     LOGGER.info("Bad instructions of rover " + roverNumber + ". Please, introduce a new ones: ");

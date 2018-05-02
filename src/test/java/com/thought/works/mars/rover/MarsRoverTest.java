@@ -107,7 +107,7 @@ public class MarsRoverTest {
     }
 
     @Test
-    public void GC_getter_valid(){
+    public void GC_getter_valid() {
         MarsRover marsRover = new MarsRover(2, 3, 'E');
         assertEquals(2, marsRover.getX());
         assertEquals(3, marsRover.getY());
@@ -115,7 +115,7 @@ public class MarsRoverTest {
     }
 
     @Test
-    public void GC_setter_valid(){
+    public void GC_setter_valid() {
         MarsRover marsRover = new MarsRover(2, 3, 'W');
         marsRover.setX(1);
         marsRover.setY(2);
@@ -128,7 +128,7 @@ public class MarsRoverTest {
     }
 
     @Test
-    public void BC_getterAndSetter_wrongHeading(){
+    public void BC_getterAndSetter_wrongHeading() {
         MarsRover marsRover = new MarsRover(2, 3, 'H');
         assertNotEquals(Cardinals.N, marsRover.getHeading());
         assertNotEquals(Cardinals.S, marsRover.getHeading());

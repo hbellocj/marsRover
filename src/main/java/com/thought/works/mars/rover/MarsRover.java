@@ -72,7 +72,7 @@ public class MarsRover {
     public void rotateHeading(boolean left) {
         List<Cardinals> cardinals = Arrays.asList(Cardinals.N, Cardinals.E, Cardinals.S, Cardinals.W);
         for (Cardinals cardinal : cardinals) {
-            if(heading.equals(cardinal)){
+            if (heading.equals(cardinal)) {
                 heading = Cardinals.getRotatedCardinal(cardinal, left);
                 break;
             }
