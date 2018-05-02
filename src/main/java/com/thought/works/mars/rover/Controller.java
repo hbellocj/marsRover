@@ -88,6 +88,9 @@ public class Controller {
                 case 'M':
                     rover.moveRover();
                     break;
+                case 'E':
+                    //do nothing
+                    break;
                 default:
                     int roverNumber = rovers.indexOf(rover) + 1;
                     LOGGER.info("Bad instructions of rover " + roverNumber + ". Please, introduce a new ones: ");
@@ -95,7 +98,7 @@ public class Controller {
                         instructions = bufferedReader.readLine();
                         rover.setInstructions(instructions);
                         executeRover(rover);
-                        break;
+                        return rover.getResponse();
                     } catch (IOException e) {
                         LOGGER.log(Level.SEVERE, "Exception in read line", e);
                     }
