@@ -1,5 +1,3 @@
-package com.thought.works.mars.rover;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -25,15 +23,15 @@ public class ControllerTest {
 
     @Test
     public void GC_executeRovers_goodResponse() throws IOException {
-        mController = new Controller();
         when(bufferedReader.readLine()).thenReturn(GRID_SIZE, ROVER_NUMBERS, POSITION, INSTRUCTIONS);
+        when(mController.getBufferedReader()).thenReturn(bufferedReader);
 
-        Assert.assertEquals(mController.runRovers(), RESPONSE);
+        String response = mController.runRovers();
+        Assert.assertEquals(response, RESPONSE);
     }
 
     @Test
     public void BC_executeRovers_exception() throws IOException {
-        mController = new Controller();
         when(bufferedReader.readLine()).thenThrow(new IOException());
         Assert.assertEquals("Error initializing rovers.", mController.runRovers());
     }

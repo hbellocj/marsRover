@@ -1,5 +1,3 @@
-package com.thought.works.mars.rover;
-
 import org.junit.Assert;
 import org.junit.Test;
 

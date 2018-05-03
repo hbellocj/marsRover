@@ -1,4 +1,3 @@
-package com.thought.works.mars.rover;
 
 import java.util.Arrays;
 import java.util.List;

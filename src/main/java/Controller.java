@@ -1,7 +1,3 @@
-package com.thought.works.mars.rover;
-
-import org.springframework.stereotype.Component;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,7 +6,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Component
 public class Controller {
     protected Logger LOGGER = Logger.getLogger(Controller.class.getName());
     private final static String EXCEPTION_INIT_ROVERS = "Error initializing rovers.";
@@ -20,7 +15,7 @@ public class Controller {
     private int xSize;
     private int ySize;
     private int roversNumber;
-    public BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+    private BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 
     private void initRovers() {
         LOGGER.info("-------------------Application started.--------------------");
@@ -28,8 +23,8 @@ public class Controller {
             LOGGER.info("Input grid size:");
             setGridSizeValue();
             LOGGER.info("Enter the number of rovers you want to run:");
-            roversNumber = Integer.parseInt(bufferedReader.readLine());
-            rovers = new ArrayList<>();
+            setNumberOfRovers();
+            rovers = new ArrayList<MarsRover>();
             for (int i = 0; i < roversNumber; i++) {
                 setRoverInformation();
             }
@@ -44,12 +39,23 @@ public class Controller {
             xSize = Character.getNumericValue(response.toCharArray()[0]);
             ySize = Character.getNumericValue(response.toCharArray()[2]);
         } catch (NumberFormatException e) {
-            LOGGER.log(Level.WARNING, "", e);
             LOGGER.info("Exception in the grid size value, introduce a new one:");
             setGridSizeValue();
         } catch (IndexOutOfBoundsException ex) {
             LOGGER.info("Exception in the grid size value, introduce a new one:");
             setGridSizeValue();
+        }
+    }
+
+    private void setNumberOfRovers() throws IOException {
+        try{
+            roversNumber = Integer.parseInt(bufferedReader.readLine());
+        } catch (NumberFormatException e) {
+            LOGGER.info("Exception setting the number of rovers, introduce a new one:");
+            setNumberOfRovers();
+        } catch (IndexOutOfBoundsException ex) {
+            LOGGER.info("Exception setting the number of rovers, introduce a new one:");
+            setNumberOfRovers();
         }
     }
 
@@ -139,5 +145,9 @@ public class Controller {
             rover.setY(Integer.parseInt(bufferedReader.readLine()));
             checkRoverValues(rover);
         }
+    }
+
+    public BufferedReader getBufferedReader() {
+        return bufferedReader;
     }
 }
