@@ -4,4 +4,6 @@ To execute the code must open in the terminal (with java previously installed) t
 Next, the following command lines must be executed:
 
 javac *.java
+
+
 java MarsRoverApplication
