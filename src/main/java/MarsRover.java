@@ -56,7 +56,7 @@ public class MarsRover {
     }
 
     public boolean isSizeValid(int xSize, int ySize) {
-        if (x > xSize || y > ySize) {
+        if (x > xSize || x < 0 || y < 0 || y > ySize) {
             return false;
         }
         return true;

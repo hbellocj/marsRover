@@ -1,6 +1,5 @@
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -11,25 +10,26 @@ public class Controller {
     private final static String EXCEPTION_INIT_ROVERS = "Error initializing rovers.";
 
     private String response;
+    private String position;
     private List<MarsRover> rovers;
     private int xSize;
     private int ySize;
     private int roversNumber;
-    private BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+    private BufferedReader bufferedReader;
 
-    private void initRovers() {
+    public Controller(BufferedReader bufferedReader) {
+        this.bufferedReader = bufferedReader;
+    }
+
+    private void initRovers() throws IOException {
         LOGGER.info("-------------------Application started.--------------------");
-        try {
-            LOGGER.info("Input grid size:");
-            setGridSizeValue();
-            LOGGER.info("Enter the number of rovers you want to run:");
-            setNumberOfRovers();
-            rovers = new ArrayList<MarsRover>();
-            for (int i = 0; i < roversNumber; i++) {
-                setRoverInformation();
-            }
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Exception in read line", e);
+        LOGGER.info("Input grid size:");
+        setGridSizeValue();
+        LOGGER.info("Enter the number of rovers you want to run:");
+        setNumberOfRovers();
+        rovers = new ArrayList<MarsRover>();
+        for (int i = 0; i < roversNumber; i++) {
+            setRoverInformation();
         }
     }
 
@@ -48,7 +48,7 @@ public class Controller {
     }
 
     private void setNumberOfRovers() throws IOException {
-        try{
+        try {
             roversNumber = Integer.parseInt(bufferedReader.readLine());
         } catch (NumberFormatException e) {
             LOGGER.info("Exception setting the number of rovers, introduce a new one:");
@@ -62,10 +62,10 @@ public class Controller {
     private void setRoverInformation() throws IOException {
         try {
             LOGGER.info("Introduce rover position:");
-            response = bufferedReader.readLine();
-            int x = Character.getNumericValue(response.toCharArray()[0]);
-            int y = Character.getNumericValue(response.toCharArray()[2]);
-            char heading = response.toCharArray()[4];
+            position = bufferedReader.readLine();
+            int x = Character.getNumericValue(position.toCharArray()[0]);
+            int y = Character.getNumericValue(position.toCharArray()[2]);
+            char heading = position.toCharArray()[4];
             LOGGER.info("Introduce the instructions:");
             response = bufferedReader.readLine();
             MarsRover marsRover = new MarsRover(x, y, heading);
@@ -80,7 +80,7 @@ public class Controller {
         }
     }
 
-    private String executeRover(MarsRover rover) {
+    private String executeRover(MarsRover rover) throws IOException {
         String instructions = rover.getInstructions();
         char[] sequence = instructions.toCharArray();
         for (char c : sequence) {
@@ -97,43 +97,44 @@ public class Controller {
                 default:
                     int roverNumber = rovers.indexOf(rover) + 1;
                     LOGGER.info("Bad instructions of rover " + roverNumber + ". Please, introduce a new ones: ");
-                    try {
-                        instructions = bufferedReader.readLine();
-                        rover.setInstructions(instructions);
-                        executeRover(rover);
-                        return rover.getResponse();
-                    } catch (IOException e) {
-                        LOGGER.log(Level.SEVERE, "Exception in read line", e);
-                    }
+                    instructions = bufferedReader.readLine();
+                    rover.setInstructions(instructions);
+                    executeRover(rover);
+                    return rover.getResponse();
             }
         }
         if (!rover.isSizeValid(xSize, ySize)) {
-            try {
-                LOGGER.info("Bad instructions. Rover can not be out of bounds. Introduce new instructions: ");
-                instructions = bufferedReader.readLine();
-                rover.setInstructions(instructions);
-                executeRover(rover);
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Exception in read line", e);
-            }
+            LOGGER.info("Bad instructions. Rover can not be out of bounds.");
+            setRoverValues(rover);
+            executeRover(rover);
         }
         return rover.getResponse();
     }
 
+    private void setRoverValues(MarsRover rover) throws IOException {
+        rover.setX(Character.getNumericValue(position.toCharArray()[0]));
+        rover.setY(Character.getNumericValue(position.toCharArray()[2]));
+        rover.setHeading(Cardinals.convertCharToCardinal(position.toCharArray()[4]));
+        LOGGER.info("Introduce the instructions:");
+        response = bufferedReader.readLine();
+        rover.setInstructions(response);
+    }
+
     public String runRovers() {
-        while (true) {
-            initRovers();
-            for (MarsRover rover : rovers) {
-                try {
+        try {
+            while (true) {
+                initRovers();
+                for (MarsRover rover : rovers) {
                     checkRoverValues(rover);
                     return executeRover(rover);
-                } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, "Exception in read line", e);
-                    return EXCEPTION_INIT_ROVERS;
                 }
             }
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Exception in read line", e);
+            return EXCEPTION_INIT_ROVERS;
         }
     }
+
 
     private void checkRoverValues(MarsRover rover) throws IOException {
         if (rover.getX() > xSize) {
@@ -145,9 +146,5 @@ public class Controller {
             rover.setY(Integer.parseInt(bufferedReader.readLine()));
             checkRoverValues(rover);
         }
-    }
-
-    public BufferedReader getBufferedReader() {
-        return bufferedReader;
     }
 }
